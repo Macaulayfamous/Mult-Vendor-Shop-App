@@ -17,7 +17,7 @@ class _HomeProductState extends State<HomeProduct> {
     return FirebaseFirestore.instance
         .collection('products')
         .where('approved', isEqualTo: true)
-        .where('categoryName', isEqualTo: categoryName);
+        .where('category', isEqualTo: categoryName);
   }
 
   @override

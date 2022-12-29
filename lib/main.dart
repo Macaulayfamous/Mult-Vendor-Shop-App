@@ -2,11 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:multi_grocery_shop/vendor/auth/vendor_login_screen.dart';
 
 import 'package:multi_grocery_shop/vendor/provider/cart_provider.dart';
 
 import 'package:multi_grocery_shop/vendor/provider/product_vendor.dart';
+import 'package:multi_grocery_shop/vendor/provider/vendor_provider.dart';
 import 'package:multi_grocery_shop/views/screens/auth/customer_login_screen.dart';
+import 'package:multi_grocery_shop/views/screens/main_screen.dart';
 
 import 'package:provider/provider.dart';
 
@@ -21,10 +24,13 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ProductProvider(),
+          create: (_) => ProductProvder(),
         ),
         ChangeNotifierProvider(
           create: (_) => CartProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => VendorProvider(),
         ),
       ],
       child: const MyApp(),
@@ -35,7 +41,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widget is the rootss of your application.
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -48,7 +54,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Semi-Bold',
       ),
-      home: CustomerLoginScreen(),
+      home: MainScreen(),
       builder: EasyLoading.init(),
     );
   }

@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_grocery_shop/vendor/inner_screens/add_product_screen.dart';
 import 'package:multi_grocery_shop/vendor/inner_screens/all_product.dart';
 import 'package:multi_grocery_shop/vendor/inner_screens/profile_screens.dart';
+import 'package:multi_grocery_shop/vendor/provider/vendor_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -14,18 +17,32 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
+    final VendorProvider _vendorProvider = Provider.of<VendorProvider>(context);
+
     return Drawer(
       child: Column(
         children: [
           Container(
-            height: 96,
             width: MediaQuery.of(context).size.width,
             child: DrawerHeader(
-              child: Text(
-                'Manage',
-                style: TextStyle(
-                  fontSize: 22,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    _vendorProvider.doc!['bussinessName'],
+                    style: TextStyle(
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 100,
+                    width: 100,
+                    child: CachedNetworkImage(
+                        imageUrl: _vendorProvider.doc!['storeImage']),
+                  ),
+                ],
               ),
             ),
           ),

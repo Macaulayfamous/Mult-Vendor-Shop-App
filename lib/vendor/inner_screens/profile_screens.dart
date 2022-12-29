@@ -4,11 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_grocery_shop/vendor/auth/vendor_login_screen.dart';
 import 'package:multi_grocery_shop/vendor/inner_screens/earnings_screen.dart';
-import 'package:multi_grocery_shop/vendor/message_screen.dart';
-import 'package:multi_grocery_shop/vendor/orderTab_screens.dart/main_tab.dart';
-import 'package:multi_grocery_shop/views/screens/main_screen.dart';
-
-import '../../views/screens/home_screen.dart';
 
 class VendorProfileScreen extends StatefulWidget {
   static const String routeName = '/profileScreen';
@@ -96,12 +91,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                         CupertinoIcons.shopping_cart,
                         size: 25,
                       ),
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return MainTab();
-                        }));
-                      },
+                      onTap: () {},
                     ),
                     ExpansionTile(
                       title: Text(

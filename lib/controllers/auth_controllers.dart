@@ -57,9 +57,7 @@ class AuthController {
           'fullName': fullName,
           'phoneNumber': phoneNumber,
           'buyerId': cred.user!.uid,
-          'country': "",
-          'state': "",
-          'city': "",
+          'address': '',
           'profileImage': profileImageUrl,
         });
 

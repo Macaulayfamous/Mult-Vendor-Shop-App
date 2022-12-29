@@ -1,47 +1,59 @@
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 
-class ProductProvider with ChangeNotifier {
+class ProductProvder with ChangeNotifier {
   Map<String, dynamic>? productData = {};
-
-  List<XFile> imagesList = [];
 
   getFormData({
     String? productName,
-    int? price,
-    String? categoryName,
-    String? productDescription,
+    double? salesPrice,
+    int? quantity,
+    String? category,
+    String? description,
+    DateTime? scheduleDate,
     bool? chargeShipping,
     int? shippingCharge,
-    DateTime? shippingDate,
+    String? brand,
+    List? sizeList,
+    List<String>? imagesList,
   }) {
     if (productName != null) {
       productData!['productName'] = productName;
     }
-    if (price != null) {
-      productData!['productPrice'] = price;
+    if (salesPrice != null) {
+      productData!['salesPrice'] = salesPrice;
     }
-    if (categoryName != null) {
-      productData!['categoryName'] = categoryName;
+    if (quantity != null) {
+      productData!['quantity'] = quantity;
     }
-    if (productDescription != null) {
-      productData!['productDescription'] = productDescription;
+    if (category != null) {
+      productData!['category'] = category;
     }
+    if (description != null) {
+      productData!['description'] = description;
+    }
+
+    if (scheduleDate != null) {
+      productData!['scheduleDate'] = scheduleDate;
+    }
+
     if (chargeShipping != null) {
       productData!['chargeShipping'] = chargeShipping;
     }
+
     if (shippingCharge != null) {
       productData!['shippingCharge'] = shippingCharge;
     }
-    if (shippingDate != null) {
-      productData!['shippingDate'] = shippingDate;
+
+    if (brand != null) {
+      productData!['brand'] = brand;
+    }
+    if (sizeList != null) {
+      productData!['sizeList'] = sizeList;
     }
 
-    notifyListeners();
-  }
-
-  getPickedImage(image) {
-    imagesList.add(image);
+    if (imagesList != null) {
+      productData!['imagesList'] = imagesList;
+    }
 
     notifyListeners();
   }

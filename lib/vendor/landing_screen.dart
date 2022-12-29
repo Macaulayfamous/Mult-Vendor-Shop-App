@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:multi_grocery_shop/vendor/auth/vendor_login_screen.dart';
-import 'package:multi_grocery_shop/vendor/home_screen.dart';
 import 'package:multi_grocery_shop/vendor/main_vendor_screen.dart';
 import 'package:multi_grocery_shop/vendor/register_screen.dart';
 

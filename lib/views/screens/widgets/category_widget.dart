@@ -111,8 +111,10 @@ class MainProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _productsStream =
-        FirebaseFirestore.instance.collection('products').snapshots();
+    final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
+        .collection('products')
+        .where('approved', isEqualTo: true)
+        .snapshots();
     return StreamBuilder<QuerySnapshot>(
       stream: _productsStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -126,6 +128,22 @@ class MainProducts extends StatelessWidget {
           );
         }
 
+        if (snapshot.data!.docs.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Center(
+              child: Text(
+                'No Product Has been\nUpload Yet',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 8,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
         return Container(
           height: 270,
           child: ListView.separated(
@@ -154,11 +172,6 @@ class ReuseProductModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
-        .collection('products')
-        .doc(categoryData['productId'])
-        .collection('reviews')
-        .snapshots();
     final CartProvider _cartProvider = Provider.of<CartProvider>(context);
     return GestureDetector(
       onTap: () {
@@ -181,9 +194,12 @@ class ReuseProductModel extends StatelessWidget {
               Container(
                 height: 120,
                 width: 120,
-                child: Image.network(
-                  categoryData['productImage'][0],
-                  fit: BoxFit.contain,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.network(
+                    categoryData['images'][0],
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Padding(
@@ -191,7 +207,7 @@ class ReuseProductModel extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      categoryData['productName'],
+                      categoryData['productname'],
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 19,
@@ -207,7 +223,7 @@ class ReuseProductModel extends StatelessWidget {
                         Text(
                           '\$' +
                               " " +
-                              categoryData['productPrice'].toStringAsFixed(2),
+                              categoryData['salesPrice'].toStringAsFixed(2),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 19,
@@ -219,11 +235,11 @@ class ReuseProductModel extends StatelessWidget {
                             onPressed: () {
                               _cartProvider.addProductToCart(
                                 categoryData['productId'],
-                                categoryData['productName'],
-                                categoryData['productImage'],
-                                categoryData['productPrice'],
+                                categoryData['productname'],
+                                categoryData['images'],
+                                categoryData['salesPrice'],
                                 categoryData['vendorId'],
-                                categoryData['shippingDate'],
+                                categoryData['scheduleDate'],
                               );
                             },
                             icon: Icon(

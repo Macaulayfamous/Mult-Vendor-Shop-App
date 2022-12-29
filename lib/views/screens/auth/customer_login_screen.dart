@@ -26,11 +26,18 @@ class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
       _isLoading = true;
     });
     if (_formKey.currentState!.validate()) {
-      await _authController.loginUsers(email, password);
-      return Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) {
-        return MainScreen();
-      }));
+      String res = await _authController.loginUsers(email, password);
+      if (res == 'success') {
+        return Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MainScreen();
+        }));
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        return showSnack(context, res);
+      }
     } else {
       setState(() {
         _isLoading = false;

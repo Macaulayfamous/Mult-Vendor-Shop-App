@@ -43,12 +43,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/shop.svg',
-                width: 20,
-              ),
-              label: 'Store'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
                 'assets/icons/cart.svg',
                 width: 20,
               ),

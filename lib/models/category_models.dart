@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:multi_grocery_shop/services/firebase_service.dart';
 
 class CategoryModels {

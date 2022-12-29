@@ -51,7 +51,7 @@ class CartScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
                             child: SizedBox(
-                              height: 150,
+                              height: 170,
                               child: Row(
                                 children: [
                                   SizedBox(

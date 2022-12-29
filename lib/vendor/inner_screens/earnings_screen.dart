@@ -64,7 +64,9 @@ class EarningsScreen extends StatelessWidget {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
+                  return Center(
+                    child: CircularProgressIndicator(color: Colors.cyan),
+                  );
                 }
                 double totalbalance = 0.0;
                 var data = [
@@ -178,32 +180,23 @@ class EarningsScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return WithdrawEarnins();
-                          }));
-                        },
-                        child: Container(
-                          height: 40,
-                          width: MediaQuery.of(context).size.width - 40,
-                          decoration: BoxDecoration(
-                            color: Colors.yellow.shade900,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'withdraw ' +
-                                  " " +
-                                  "\$" +
-                                  " " +
-                                  totalbalance.toStringAsFixed(2),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
-                              ),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return WithdrawEarnins();
+                            }));
+                          },
+                          child: Text(
+                            'withdraw ' +
+                                " " +
+                                "\$" +
+                                " " +
+                                totalbalance.toStringAsFixed(2),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
                             ),
                           ),
                         ),

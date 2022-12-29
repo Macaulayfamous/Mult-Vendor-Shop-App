@@ -182,7 +182,7 @@ class _WithdrawEarninsState extends State<WithdrawEarnins> {
                           ),
                           child: Center(
                             child: Text(
-                              'Cash Out',
+                              'COLLECT',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,

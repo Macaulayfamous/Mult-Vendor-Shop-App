@@ -17,7 +17,8 @@ class _AllCategoriesProductState extends State<AllCategoriesProduct> {
   prodcuctQuery({categoryName}) {
     return FirebaseFirestore.instance
         .collection('products')
-        .where('categoryName', isEqualTo: categoryName);
+        .where('approved', isEqualTo: true)
+        .where('category', isEqualTo: categoryName);
   }
 
   @override

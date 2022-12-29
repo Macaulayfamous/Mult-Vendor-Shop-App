@@ -9,6 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:multi_grocery_shop/services/firebase_service.dart';
 import 'package:multi_grocery_shop/vendor/provider/product_vendor.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_grocery_shop/vendor/tab_screens/attributes_screen.dart';
+import 'package:multi_grocery_shop/vendor/tab_screens/general_screen.dart';
+import 'package:multi_grocery_shop/vendor/tab_screens/images_screen.dart';
+import 'package:multi_grocery_shop/vendor/tab_screens/shipping_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -23,12 +27,12 @@ class AddProductScreen extends StatefulWidget {
 class _ProductTabState extends State<AddProductScreen> {
   late String productId;
   final FirebaseService _firebaseService = FirebaseService();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   late String productName;
 
   late double productPrice;
-  bool _chargeShipping = false;
+
   DateTime? shippingDate;
 
   late int quantity;
@@ -39,6 +43,7 @@ class _ProductTabState extends State<AddProductScreen> {
 
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<XFile>? imageList = [];
   List<String> imageUrlList = [];
@@ -69,343 +74,91 @@ class _ProductTabState extends State<AddProductScreen> {
     });
   }
 
-  Future<void> _uploadImages() async {
-    EasyLoading.show();
-    if (_formKey.currentState!.validate()) {
-      if (imageList!.isNotEmpty) {
-        try {
-          for (var image in imageList!) {
-            Reference ref =
-                _storage.ref().child('productImages').child(Uuid().v4());
-
-            await ref.putFile(File(image.path)).whenComplete(() async {
-              await ref.getDownloadURL().then((value) {
-                imageUrlList.add(value);
-              });
-            });
-          }
-        } catch (e) {
-          print(e);
-        }
-      } else {
-        setState(() {
-          EasyLoading.dismiss();
-        });
-        print('Please Pick an Image');
-      }
-    } else {
-      setState(() {
-        EasyLoading.dismiss();
-      });
-    }
-  }
-
-  void uploadData() async {
-    if (imageUrlList.isNotEmpty) {
-      CollectionReference productRef =
-          _firebaseFirestore.collection('products');
-
-      productId = Uuid().v4();
-
-      await productRef.doc(productId).set({
-        'approved': false,
-        'productId': productId,
-        'productImage': imageUrlList,
-        'productName': productName,
-        'productPrice': productPrice,
-        'quantity': quantity,
-        'categoryName': selectedCategory,
-        'productDescription': productDescription,
-        'shippingDate': shippingDate,
-        'vendorId': FirebaseAuth.instance.currentUser!.uid,
-      }).whenComplete(() {
-        setState(() {
-          imageList = [];
-          imageUrlList = [];
-          _formKey.currentState!.reset();
-          EasyLoading.dismiss();
-        });
-      });
-    } else {
-      setState(() {
-        EasyLoading.dismiss();
-      });
-    }
-  }
-
-  uploadProduct() async {
-    await _uploadImages().whenComplete(() => uploadData());
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(
-            color: Colors.black,
+    final ProductProvder _productProvder = Provider.of<ProductProvder>(context);
+
+    return DefaultTabController(
+      length: 4,
+      initialIndex: 0,
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.yellow.shade900,
+            bottom: TabBar(tabs: [
+              Tab(
+                child: Text('General'),
+              ),
+              Tab(
+                child: Text('Shipping'),
+              ),
+              Tab(
+                child: Text('Attributes'),
+              ),
+              Tab(
+                child: Text('Images'),
+              ),
+            ]),
           ),
-          title: Text(
-            'Add Products',
-            style: TextStyle(
-              color: Colors.black,
+          body: TabBarView(children: [
+            GeneralScreen(),
+            ShippingScreen(),
+            AttributesScreen(),
+            ImagesScren()
+          ]),
+          persistentFooterButtons: [
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.yellow.shade900,
+                    ),
+                    onPressed: () async {
+                      EasyLoading.show();
+                      if (_formKey.currentState!.validate()) {
+                        final productId = Uuid().v1();
+                        await _firebaseFirestore
+                            .collection('products')
+                            .doc(productId)
+                            .set({
+                          'productId': productId,
+                          'vendorId': FirebaseAuth.instance.currentUser!.uid,
+                          'productname':
+                              _productProvder.productData!['productName'],
+                          'images': _productProvder.productData!['imagesList'],
+                          'category': _productProvder.productData!['category'],
+                          'salesPrice':
+                              _productProvder.productData!['salesPrice'],
+                          'description':
+                              _productProvder.productData!['description'],
+                          'scheduleDate':
+                              _productProvder.productData!['scheduleDate'],
+                          'chargeShipping':
+                              _productProvder.productData!['chargeShipping'],
+                          'shippingCharge':
+                              _productProvder.productData!['shippingCharge'],
+                          'brand': _productProvder.productData!['brand'],
+                          'sizeList': _productProvder.productData!['sizeList'],
+                          'quantity': _productProvder.productData!['quantity'],
+                          'approved': false,
+                        }).whenComplete(() {
+                          EasyLoading.dismiss();
+                          _productProvder.productData!.clear();
+                          _formKey.currentState!.reset();
+                        });
+                      }
+                    },
+                    child: Text('Save Product'),
+                  ),
+                ),
+              ],
             ),
-          ),
-          centerTitle: false,
+          ],
         ),
-        body: Consumer<ProductProvider>(
-          builder: (BuildContext context, _productProvider, Widget? child) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Kindly Fill The Required Fields',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Please Fields must not be empty";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Enter Product Name',
-                        ),
-                        onChanged: (value) {
-                          productName = value;
-                        },
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please Feilds must not be empty';
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Enter Product Price',
-                        ),
-                        onChanged: (value) {
-                          productPrice = double.parse(value);
-                        },
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      DropdownButtonFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please category must not be empty';
-                          } else {
-                            return null;
-                          }
-                        },
-                        hint: Text('Select Category'),
-                        value: selectedCategory,
-                        items:
-                            _categoryList.map<DropdownMenuItem<dynamic>>((e) {
-                          return DropdownMenuItem(
-                            child: Text(e),
-                            value: e,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(
-                            () {
-                              selectedCategory = value;
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CheckboxListTile(
-                              title: Text(
-                                'Charge Shipping',
-                                style: TextStyle(fontSize: 19),
-                              ),
-                              value: _chargeShipping,
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    _chargeShipping = value!;
-                                  },
-                                );
-                              },
-                            ),
-                            if (_chargeShipping == true)
-                              Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: TextFormField(
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    labelText: 'Shipping Charge',
-                                  ),
-                                  onChanged: (value) {},
-                                ),
-                              ),
-                            TextButton(
-                              onPressed: () {
-                                showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime(5000),
-                                ).then((value) {
-                                  setState(() {
-                                    shippingDate = value;
-                                  });
-                                });
-                              },
-                              child: Text(
-                                'Set Shipping Date ?',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.yellow.shade900,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            if (shippingDate != null)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(shippingDate!)
-                                      .toString(),
-                                  style: TextStyle(
-                                    color: Colors.cyan,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            pickProductImages();
-                          },
-                          child: Text(
-                            'upload Images',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 100,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: imageList!.length,
-                            itemBuilder: (context, index) {
-                              return Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: Container(
-                                      height: 100,
-                                      child: Center(
-                                          child: Image.file(
-                                              File(imageList![index].path)))),
-                                ),
-                              );
-                            }),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          onChanged: (value) {
-                            quantity = int.parse(value);
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Quantity',
-                          ),
-                        ),
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please Feilds must not be empty';
-                          } else {
-                            return null;
-                          }
-                        },
-                        maxLength: 800,
-                        maxLines: 10,
-                        decoration: InputDecoration(
-                          labelText: 'Description',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              15,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          productDescription = value;
-                        },
-                      ),
-                      Container(
-                        height: 100,
-                        width: 100,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        bottomSheet: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton.small(
-                onPressed: () {},
-                child: IconButton(
-                  onPressed: () {
-                    uploadProduct();
-                  },
-                  icon: Icon(
-                    Icons.upload,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 }

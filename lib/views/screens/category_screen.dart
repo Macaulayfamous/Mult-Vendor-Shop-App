@@ -85,7 +85,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     SizedBox(
                       height: 150,
                       width: 100,
-                      child: Image.network(categoryModels.categoryImage),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.network(
+                              categoryModels.categoryImage,
+                              fit: BoxFit.cover,
+                            )),
+                      ),
                     ),
                     SizedBox(
                       width: 40,

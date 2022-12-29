@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:multi_grocery_shop/vendor/message_screen.dart';
-import 'package:multi_grocery_shop/vendor/orderTab_screens.dart/delivered.dart';
-import 'package:multi_grocery_shop/vendor/orderTab_screens.dart/shipping_screen.dart';
 import 'package:multi_grocery_shop/views/screens/customer_tab/cus_delivered.dart';
 import 'package:multi_grocery_shop/views/screens/customer_tab/cus_shipping.dart';
 
